@@ -11,11 +11,34 @@ namespace TimeToTomato.Tests
     [TestFixture]
     public class AssistantTests
     {
-        [Test]
-        public void AssistantRunWorkTimerTest()
+        Assistant _assistant;
+        bool _timerActivatedOccurred;
+        bool _timerStoppedOccurred;
+
+        [SetUp]
+        public void SetUp()
         {
-            Assistant a = new Assistant();
-            a.StartWorkTimer();
+            _assistant = new Assistant();
+            _timerActivatedOccurred = false;
+            _timerStoppedOccurred = false;
+            _assistant.TimerActivated += (o, e) => _timerActivatedOccurred = true;
+            _assistant.TimerStopped += (o, e) => _timerStoppedOccurred = true;
+        }
+
+        [Test]
+        public void AssistantStartWorkTimerTimerActivatedTest()
+        {
+            _assistant.StartWorkTimer();
+
+            Assert.AreEqual(true, _timerActivatedOccurred);
+        }
+
+        [Test]
+        public void AssistantStopTimerTimerStoppedTest()
+        {
+            _assistant.StopTimer();
+
+            Assert.AreEqual(true, _timerStoppedOccurred);
         }
     }
 }

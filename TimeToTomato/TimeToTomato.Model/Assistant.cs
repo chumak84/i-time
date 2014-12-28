@@ -11,6 +11,7 @@ namespace TimeToTomato.Model
     {
         private ISecondTicker _mockTicker;
         private int _secondsElapsed = 60 * 25;
+        private bool _isActive = false;
 
         public event EventHandler TimerActivated;
         public event EventHandler TimerStopped;
@@ -26,6 +27,10 @@ namespace TimeToTomato.Model
         void _mockTicker_Tick(object sender, EventArgs e)
         {
             SecondsElapsed--;
+            if(SecondsElapsed == 0)
+            {
+                StopTimer();
+            }
         }
 
         public void StartWorkTimer()
@@ -33,6 +38,8 @@ namespace TimeToTomato.Model
             EventHandler handler = TimerActivated;
             if (handler != null)
                 handler(this, EventArgs.Empty);
+
+            _isActive = true;
         }
 
         public void StopTimer()
@@ -42,6 +49,7 @@ namespace TimeToTomato.Model
                 handler(this, EventArgs.Empty);
 
             SecondsElapsed = 60 * 25;
+            _isActive = false;
         }
 
         public int SecondsElapsed
@@ -57,6 +65,11 @@ namespace TimeToTomato.Model
                         handler(this, EventArgs.Empty);
                 }
             }
+        }
+
+        public bool IsActive
+        {
+            get { return _isActive; }
         }
     }
 }

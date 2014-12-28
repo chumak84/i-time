@@ -12,6 +12,8 @@ namespace TimeToTomato.Tests
     [TestFixture]
     public class AssistantTests
     {
+        private const int workSeconds = 60 * 25;
+
         Assistant _assistant;
         bool _timerActivatedOccurred;
         bool _timerStoppedOccurred;
@@ -49,7 +51,7 @@ namespace TimeToTomato.Tests
             _assistant.StartWorkTimer();
             int se = _assistant.SecondsElapsed;
 
-            Assert.AreEqual(60 * 25, se);
+            Assert.AreEqual(workSeconds, se);
         }
 
         [Test]
@@ -60,7 +62,7 @@ namespace TimeToTomato.Tests
 
             int se = _assistant.SecondsElapsed;
 
-            Assert.AreEqual(60 * 25 - 100, se);
+            Assert.AreEqual(workSeconds - 100, se);
         }
 
         [Test]
@@ -72,7 +74,7 @@ namespace TimeToTomato.Tests
 
             int se = _assistant.SecondsElapsed;
 
-            Assert.AreEqual(60 * 25, se);
+            Assert.AreEqual(workSeconds, se);
         }
 
         [Test]
@@ -88,6 +90,47 @@ namespace TimeToTomato.Tests
             _assistant.StopTimer();
 
             Assert.AreEqual(101, eventAppeared);
+        }
+
+        [Test]
+        public void AssistantTimerAutoStopElapsed()
+        {
+            _assistant.StartWorkTimer();
+            _mockTicker.GenerateTicks(workSeconds);
+
+            Assert.AreEqual(true, _timerStoppedOccurred);
+        }
+
+        [Test]
+        public void AssistantIsActiveBeforeStart()
+        {
+            Assert.AreEqual(false, _assistant.IsActive);
+        }
+        
+        [Test]
+        public void AssistantIsActiveAfterStart()
+        {
+            _assistant.StartWorkTimer();
+
+            Assert.AreEqual(true, _assistant.IsActive);
+        }
+
+        [Test]
+        public void AssistantIsActiveAfterStartStop()
+        {
+            _assistant.StartWorkTimer();
+            _assistant.StopTimer();
+
+            Assert.AreEqual(false, _assistant.IsActive);
+        }
+
+        [Test]
+        public void AssistantIsActiveAfterStartAndElapsedAll()
+        {
+            _assistant.StartWorkTimer();
+            _mockTicker.GenerateTicks(workSeconds);
+
+            Assert.AreEqual(false, _assistant.IsActive);
         }
     }
 }

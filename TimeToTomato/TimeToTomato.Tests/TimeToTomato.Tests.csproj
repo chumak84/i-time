@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssistantTests.cs" />
+    <Compile Include="Mocks\MockedInfrastructureFactory.cs" />
     <Compile Include="Mocks\SecondTicker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -55,6 +56,10 @@
     <ProjectReference Include="..\TimeToTomato.Model\TimeToTomato.Model.csproj">
       <Project>{68654716-2438-4638-ad32-5b5ac37951ea}</Project>
       <Name>TimeToTomato.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TimeToTomato.ViewModels\TimeToTomato.ViewModels.csproj">
+      <Project>{363db270-936c-40ff-b360-c4137f27c34e}</Project>
+      <Name>TimeToTomato.ViewModels</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

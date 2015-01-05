@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TimeToTomato.Model.Interfaces;
+using TimeToTomato.Model.Infrastructure;
 
 namespace TimeToTomato.Model
 {
@@ -17,10 +17,9 @@ namespace TimeToTomato.Model
         public event EventHandler TimerStopped;
         public event EventHandler SecondsElapsedChanged;
 
-        public Assistant(ISecondTicker _mockTicker)
+        public Assistant()
         {
-            // TODO: Complete member initialization
-            this._mockTicker = _mockTicker;
+            this._mockTicker = InfrastructureFactory.CreateSecondTicker();
             this._mockTicker.Tick += _mockTicker_Tick;
         }
 

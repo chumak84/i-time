@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TimeToTomato.Model.Interfaces;
+using TimeToTomato.Model.Infrastructure;
 
 namespace TimeToTomato.Tests.Mocks
 {

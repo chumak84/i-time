@@ -20,11 +20,21 @@ namespace TimeToTomato.Tests
 
         SecondTicker _mockTicker;
 
+        [TestFixtureSetUp]
+        public void FixtureSetUp()
+        {
+
+        }
+
         [SetUp]
         public void SetUp()
         {
             _mockTicker = new SecondTicker();
-            _assistant = new Assistant(_mockTicker);
+            MockedInfrastructureFactory mf = new MockedInfrastructureFactory();
+            mf.SecondTicker = _mockTicker;
+            mf.Init();
+
+            _assistant = new Assistant();
             _timerActivatedOccurred = false;
             _timerStoppedOccurred = false;
             _assistant.TimerActivated += (o, e) => _timerActivatedOccurred = true;
@@ -32,26 +42,22 @@ namespace TimeToTomato.Tests
         }
 
         [Test]
-        public void AssistantStartWorkTimerTimerActivatedTest()
+        public void AssistantStartWorkTimerTimerActivated()
         {
             _assistant.StartWorkTimer();
-            Assert.AreEqual(true, _timerActivatedOccurred);
+
+            Assert.AreEqual(workSeconds, _assistant.SecondsElapsed);
+            Assert.True(_timerActivatedOccurred);
+            Assert.True(_assistant.IsActive);
         }
 
         [Test]
-        public void AssistantStopTimerTimerStoppedTest()
+        public void AssistantStopTimerTimerStopped()
         {
             _assistant.StopTimer();
             Assert.AreEqual(true, _timerStoppedOccurred);
-        }
-
-        [Test]
-        public void AssistantStart25x60SecondsElapsed()
-        {
-            _assistant.StartWorkTimer();
-            int se = _assistant.SecondsElapsed;
-
-            Assert.AreEqual(workSeconds, se);
+            Assert.AreEqual(workSeconds, _assistant.SecondsElapsed);
+            Assert.False(_assistant.IsActive);
         }
 
         [Test]
@@ -61,7 +67,6 @@ namespace TimeToTomato.Tests
             _mockTicker.GenerateTicks(100);
 
             int se = _assistant.SecondsElapsed;
-
             Assert.AreEqual(workSeconds - 100, se);
         }
 
@@ -73,7 +78,6 @@ namespace TimeToTomato.Tests
             _assistant.StopTimer();
 
             int se = _assistant.SecondsElapsed;
-
             Assert.AreEqual(workSeconds, se);
         }
 
@@ -93,44 +97,20 @@ namespace TimeToTomato.Tests
         }
 
         [Test]
-        public void AssistantTimerAutoStopElapsed()
-        {
-            _assistant.StartWorkTimer();
-            _mockTicker.GenerateTicks(workSeconds);
-
-            Assert.AreEqual(true, _timerStoppedOccurred);
-        }
-
-        [Test]
         public void AssistantIsActiveBeforeStart()
         {
-            Assert.AreEqual(false, _assistant.IsActive);
-        }
-        
-        [Test]
-        public void AssistantIsActiveAfterStart()
-        {
-            _assistant.StartWorkTimer();
-
-            Assert.AreEqual(true, _assistant.IsActive);
+            Assert.False(_assistant.IsActive);
         }
 
         [Test]
-        public void AssistantIsActiveAfterStartStop()
-        {
-            _assistant.StartWorkTimer();
-            _assistant.StopTimer();
-
-            Assert.AreEqual(false, _assistant.IsActive);
-        }
-
-        [Test]
-        public void AssistantIsActiveAfterStartAndElapsedAll()
+        public void AssistantIsNotActiveAfterStartAndElapsedAll()
         {
             _assistant.StartWorkTimer();
             _mockTicker.GenerateTicks(workSeconds);
 
-            Assert.AreEqual(false, _assistant.IsActive);
+            Assert.False(_assistant.IsActive);
+            Assert.True(_timerActivatedOccurred);
+            Assert.True(_timerStoppedOccurred);
         }
     }
 }

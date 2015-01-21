@@ -5,112 +5,100 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TimeToTomato.Model;
-using TimeToTomato.Tests.Mocks;
+using TimeToTomato.Model.Infrastructure;
+using TimeToTomato.Tests.ISecondTImerStubs;
 
 namespace TimeToTomato.Tests
 {
     [TestFixture]
     public class AssistantTests
     {
-        private const int workSeconds = 60 * 25;
+        private const int workTimerSeconds = 25 * 60;
+        private const int shortBreakSeconds = 5 * 60;
+        private const int longBreakSeconds = 20 * 60;
 
-        Assistant _assistant;
-        bool _timerActivatedOccurred;
-        bool _timerStoppedOccurred;
+        private Assistant _assistant;
 
-        SecondTicker _mockTicker;
-
-        [TestFixtureSetUp]
-        public void FixtureSetUp()
-        {
-
-        }
+        private SecondTickerStub _mockTicker;
 
         [SetUp]
         public void SetUp()
         {
-            _mockTicker = new SecondTicker();
-            MockedInfrastructureFactory mf = new MockedInfrastructureFactory();
-            mf.SecondTicker = _mockTicker;
-            mf.Init();
+            _mockTicker = new SecondTickerStub();
+            InfrastructureFactory.ProvideSecondTicker(_mockTicker);
 
             _assistant = new Assistant();
-            _timerActivatedOccurred = false;
-            _timerStoppedOccurred = false;
-            _assistant.TimerActivated += (o, e) => _timerActivatedOccurred = true;
-            _assistant.TimerStopped += (o, e) => _timerStoppedOccurred = true;
         }
 
         [Test]
-        public void AssistantStartWorkTimerTimerActivated()
+        public void Timer_Initial_ExistPropertyWithCorrectType()
+        {
+            Timer t = _assistant.Timer;
+            Assert.IsNotNull(t);
+        }
+
+        [Test]
+        public void StartWorkTimer_Start_WorkSecondsPassedToTimer()
         {
             _assistant.StartWorkTimer();
 
-            Assert.AreEqual(workSeconds, _assistant.SecondsElapsed);
-            Assert.True(_timerActivatedOccurred);
-            Assert.True(_assistant.IsActive);
+            Timer t = _assistant.Timer;
+            Assert.AreEqual(workTimerSeconds, t.SecondsElapsed);
         }
 
         [Test]
-        public void AssistantStopTimerTimerStopped()
-        {
-            _assistant.StopTimer();
-            Assert.AreEqual(true, _timerStoppedOccurred);
-            Assert.AreEqual(workSeconds, _assistant.SecondsElapsed);
-            Assert.False(_assistant.IsActive);
-        }
-
-        [Test]
-        public void AssistantTimerWorkingSecondsElapsedChange()
+        public void StartWorkTimer_Start_TimerIsActiveTrue()
         {
             _assistant.StartWorkTimer();
-            _mockTicker.GenerateTicks(100);
 
-            int se = _assistant.SecondsElapsed;
-            Assert.AreEqual(workSeconds - 100, se);
+            Timer t = _assistant.Timer;
+            Assert.True(t.IsActive);
         }
 
         [Test]
-        public void AssistantTimerWorkingStopingResetsSeconds()
+        public void StopTimer_StopAfterStart_TimerIsActiveFalse()
         {
             _assistant.StartWorkTimer();
-            _mockTicker.GenerateTicks(100);
             _assistant.StopTimer();
 
-            int se = _assistant.SecondsElapsed;
-            Assert.AreEqual(workSeconds, se);
+            Timer t = _assistant.Timer;
+            Assert.False(t.IsActive);
         }
 
         [Test]
-        public void AssistantTimerEventSecondsElapsed()
+        public void StartShortBreak_TimerStopped_ElapsedShortBreakSeconds()
         {
-            int eventAppeared = 0;
-            _assistant.SecondsElapsedChanged += (o, e) => eventAppeared++;
-            _assistant.StartWorkTimer();
-            _mockTicker.GenerateTicks(100);
+            _assistant.StartShortBreak();
 
-            Assert.AreEqual(100, eventAppeared);
-
-            _assistant.StopTimer();
-
-            Assert.AreEqual(101, eventAppeared);
+            Timer t = _assistant.Timer;
+            Assert.AreEqual(shortBreakSeconds, t.SecondsElapsed);
         }
 
         [Test]
-        public void AssistantIsActiveBeforeStart()
+        public void StartShortBreak_TimerStopped_TimerIsActive()
         {
-            Assert.False(_assistant.IsActive);
+            _assistant.StartShortBreak();
+
+            Timer t = _assistant.Timer;
+            Assert.True(t.IsActive);
         }
 
         [Test]
-        public void AssistantIsNotActiveAfterStartAndElapsedAll()
+        public void StartLongBreak_TimerStopped_ElapsedLongBreakSeconds()
         {
-            _assistant.StartWorkTimer();
-            _mockTicker.GenerateTicks(workSeconds);
+            _assistant.StartShortBreak();
 
-            Assert.False(_assistant.IsActive);
-            Assert.True(_timerActivatedOccurred);
-            Assert.True(_timerStoppedOccurred);
+            Timer t = _assistant.Timer;
+            Assert.AreEqual(shortBreakSeconds, t.SecondsElapsed);
+        }
+
+        [Test]
+        public void StartLongBreak_TimerStopped_TimerIsActive()
+        {
+            _assistant.StartShortBreak();
+
+            Timer t = _assistant.Timer;
+            Assert.True(t.IsActive);
         }
     }
 }

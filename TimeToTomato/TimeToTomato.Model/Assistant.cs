@@ -9,66 +9,36 @@ namespace TimeToTomato.Model
 {
     public class Assistant
     {
-        private ISecondTicker _mockTicker;
-        private int _secondsElapsed = 60 * 25;
-        private bool _isActive = false;
-
-        public event EventHandler TimerActivated;
-        public event EventHandler TimerStopped;
-        public event EventHandler SecondsElapsedChanged;
+        private Timer _timer;
+        private const int WORK_SECONDS = 25 * 60;
+        private const int SHORTBREAK_SECONDS = 5 * 60;
+        private const int LONGBREAK_SECONDS = 20 * 60;
 
         public Assistant()
         {
-            this._mockTicker = InfrastructureFactory.CreateSecondTicker();
-            this._mockTicker.Tick += _mockTicker_Tick;
+            _timer = new Timer(InfrastructureFactory.CreateSecondTicker());
         }
 
-        void _mockTicker_Tick(object sender, EventArgs e)
+        public Timer Timer
         {
-            SecondsElapsed--;
-            if(SecondsElapsed == 0)
-            {
-                StopTimer();
-            }
+            get { return _timer; }
         }
 
         public void StartWorkTimer()
         {
-            EventHandler handler = TimerActivated;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-
-            _isActive = true;
+            _timer.SecondsElapsed = WORK_SECONDS;
+            _timer.Start();
         }
 
         public void StopTimer()
         {
-            EventHandler handler = TimerStopped;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-
-            SecondsElapsed = 60 * 25;
-            _isActive = false;
+            _timer.Stop();
         }
 
-        public int SecondsElapsed
+        public void StartShortBreak()
         {
-            get { return _secondsElapsed; }
-            set
-            { 
-                if(_secondsElapsed != value)
-                {
-                    _secondsElapsed = value;
-                    EventHandler handler = SecondsElapsedChanged;
-                    if (handler != null)
-                        handler(this, EventArgs.Empty);
-                }
-            }
-        }
-
-        public bool IsActive
-        {
-            get { return _isActive; }
+            _timer.SecondsElapsed = SHORTBREAK_SECONDS;
+            _timer.Start();
         }
     }
 }

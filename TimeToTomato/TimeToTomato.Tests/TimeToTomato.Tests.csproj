@@ -45,9 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssistantTests.cs" />
-    <Compile Include="Mocks\MockedInfrastructureFactory.cs" />
-    <Compile Include="Mocks\SecondTicker.cs" />
+    <Compile Include="ISecondTIckerStubs\SecondTickerStub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

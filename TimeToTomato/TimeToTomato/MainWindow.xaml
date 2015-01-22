@@ -1,8 +1,12 @@
 ﻿<Window x:Class="TimeToTomato.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="TTT" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Width="255">
+    <StackPanel Orientation="Horizontal" Height="30">
+        <TextBlock FontSize="20" Margin="5,0">00:00</TextBlock>
+        <Button Background="#FFA1D8A9" Width="35">Work</Button>
+        <Button Width="35">Short</Button>
+        <Button Width="35">Long</Button>
+        <Button Content="Stop" Width="35" Background="#FFD39393"/>
+    </StackPanel>
 </Window>

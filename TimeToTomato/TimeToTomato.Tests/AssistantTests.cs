@@ -13,19 +13,20 @@ namespace TimeToTomato.Tests
     [TestFixture]
     public class AssistantTests
     {
-        private const int workTimerSeconds = 25 * 60;
-        private const int shortBreakSeconds = 5 * 60;
-        private const int longBreakSeconds = 20 * 60;
+        private const int WORK_SECONDS = 25 * 60;
+        private const int SHORTBREAK_SECONDS = 5 * 60;
+        private const int LONGBREAK_SECONDS = 20 * 60;
+        private const int UPDATE_SECONDS = 1;
 
         private Assistant _assistant;
 
-        private SecondTickerStub _mockTicker;
+        private TimerStub _stubTicker;
 
         [SetUp]
         public void SetUp()
         {
-            _mockTicker = new SecondTickerStub();
-            InfrastructureFactory.ProvideSecondTicker(_mockTicker);
+            _stubTicker = new TimerStub();
+            InfrastructureFactory.ProvideTimer(_stubTicker);
 
             _assistant = new Assistant();
         }
@@ -33,72 +34,73 @@ namespace TimeToTomato.Tests
         [Test]
         public void Timer_Initial_ExistPropertyWithCorrectType()
         {
-            Timer t = _assistant.Timer;
+            ITimer t = _assistant.Timer;
             Assert.IsNotNull(t);
+            Assert.IsInstanceOf<TimerStub>(t);
         }
 
         [Test]
-        public void StartWorkTimer_Start_WorkSecondsPassedToTimer()
+        public void StartWorkTimer_Init_StartIsCalled()
         {
             _assistant.StartWorkTimer();
 
-            Timer t = _assistant.Timer;
-            Assert.AreEqual(workTimerSeconds, t.SecondsElapsed);
+            Assert.True(_stubTicker.StartCalled);
         }
 
         [Test]
-        public void StartWorkTimer_Start_TimerIsActiveTrue()
+        public void StartWorkTimer_Init_WorkTimerSecondsPassed()
         {
             _assistant.StartWorkTimer();
 
-            Timer t = _assistant.Timer;
-            Assert.True(t.IsActive);
+            Assert.AreEqual(WORK_SECONDS, _stubTicker.TimeInSecondsPassed);
         }
 
         [Test]
-        public void StopTimer_StopAfterStart_TimerIsActiveFalse()
+        public void StartWorkTimer_Init_SecondsUpdatePassed()
         {
             _assistant.StartWorkTimer();
-            _assistant.StopTimer();
 
-            Timer t = _assistant.Timer;
-            Assert.False(t.IsActive);
+            Assert.AreEqual(UPDATE_SECONDS, _stubTicker.SecondsUpdatePassed);
         }
 
         [Test]
-        public void StartShortBreak_TimerStopped_ElapsedShortBreakSeconds()
+        public void StartShortBreak_Init_ShortBreakSecondsPassed()
         {
             _assistant.StartShortBreak();
 
-            Timer t = _assistant.Timer;
-            Assert.AreEqual(shortBreakSeconds, t.SecondsElapsed);
+            Assert.AreEqual(SHORTBREAK_SECONDS, _stubTicker.TimeInSecondsPassed);
         }
 
         [Test]
-        public void StartShortBreak_TimerStopped_TimerIsActive()
+        public void StartShortBreak_Init_SecondsUpdatePassed()
         {
             _assistant.StartShortBreak();
 
-            Timer t = _assistant.Timer;
-            Assert.True(t.IsActive);
+            Assert.AreEqual(UPDATE_SECONDS, _stubTicker.SecondsUpdatePassed);
         }
 
         [Test]
-        public void StartLongBreak_TimerStopped_ElapsedLongBreakSeconds()
+        public void StartLongBreak_Init_TimerStartCalled()
         {
-            _assistant.StartShortBreak();
+            _assistant.StartLongBreak();
 
-            Timer t = _assistant.Timer;
-            Assert.AreEqual(shortBreakSeconds, t.SecondsElapsed);
+            Assert.True(_stubTicker.StartCalled);
         }
 
         [Test]
-        public void StartLongBreak_TimerStopped_TimerIsActive()
+        public void StartLongBreak_Init_TimerLongBreakSecondsPassed()
         {
-            _assistant.StartShortBreak();
+            _assistant.StartLongBreak();
 
-            Timer t = _assistant.Timer;
-            Assert.True(t.IsActive);
+            Assert.AreEqual(LONGBREAK_SECONDS, _stubTicker.TimeInSecondsPassed);
+        }
+
+        [Test]
+        public void StartLongBreak_Init_TimerSecondsUpdatePassed()
+        {
+            _assistant.StartLongBreak();
+
+            Assert.AreEqual(UPDATE_SECONDS, _stubTicker.SecondsUpdatePassed);
         }
     }
 }

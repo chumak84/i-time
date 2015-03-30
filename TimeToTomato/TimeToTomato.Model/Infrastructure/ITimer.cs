@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace TimeToTomato.Model.Infrastructure
 {
-    public interface ISecondTicker
+    public interface ITimer
     {
-        void Start();
+        void Start(int timeInSeconds, int secondsUpdate);
         void Stop();
+        int SecondsElapsed { get; }
+        bool IsActive { get; }
         event EventHandler Tick;
+        event EventHandler Done;
     }
 }

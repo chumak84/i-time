@@ -9,25 +9,25 @@ namespace TimeToTomato.Model
 {
     public class Assistant
     {
-        private Timer _timer;
+        private ITimer _timer;
         private const int WORK_SECONDS = 25 * 60;
         private const int SHORTBREAK_SECONDS = 5 * 60;
         private const int LONGBREAK_SECONDS = 20 * 60;
+        private const int UPDATE_SECONDS = 1;
 
         public Assistant()
         {
-            _timer = new Timer(InfrastructureFactory.CreateSecondTicker());
+            _timer = InfrastructureFactory.CreateTimer();
         }
 
-        public Timer Timer
+        public ITimer Timer
         {
             get { return _timer; }
         }
 
         public void StartWorkTimer()
         {
-            _timer.SecondsElapsed = WORK_SECONDS;
-            _timer.Start();
+            _timer.Start(WORK_SECONDS, UPDATE_SECONDS);
         }
 
         public void StopTimer()
@@ -37,8 +37,12 @@ namespace TimeToTomato.Model
 
         public void StartShortBreak()
         {
-            _timer.SecondsElapsed = SHORTBREAK_SECONDS;
-            _timer.Start();
+            _timer.Start(SHORTBREAK_SECONDS, UPDATE_SECONDS);
+        }
+
+        public void StartLongBreak()
+        {
+            _timer.Start(LONGBREAK_SECONDS, UPDATE_SECONDS);
         }
     }
 }

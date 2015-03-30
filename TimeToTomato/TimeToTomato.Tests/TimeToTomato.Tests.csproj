@@ -45,9 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssistantTests.cs" />
-    <Compile Include="ISecondTIckerStubs\SecondTickerStub.cs" />
+    <Compile Include="ISecondTIckerStubs\TimerStub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TimerTests.cs" />
     <Compile Include="ViewModels\MainViewModelTests.cs" />
   </ItemGroup>
   <ItemGroup>

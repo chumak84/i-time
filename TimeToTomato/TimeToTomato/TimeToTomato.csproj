@@ -61,6 +61,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Infrastructure\Timer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -92,6 +93,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TimeToTomato.Model\TimeToTomato.Model.csproj">
+      <Project>{68654716-2438-4638-ad32-5b5ac37951ea}</Project>
+      <Name>TimeToTomato.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TimeToTomato.ViewModels\TimeToTomato.ViewModels.csproj">
+      <Project>{363db270-936c-40ff-b360-c4137f27c34e}</Project>
+      <Name>TimeToTomato.ViewModels</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -102,5 +102,36 @@ namespace TimeToTomato.Tests
 
             Assert.AreEqual(UPDATE_SECONDS, _stubTicker.SecondsUpdatePassed);
         }
+
+        [Test]
+        public void Stop_Init_CallStopToTimer()
+        {
+            _assistant.StopTimer();
+
+            Assert.True(_stubTicker.StopCalled);
+        }
+
+        [Test]
+        public void ElapsedChanged_OnTimerTicks_RaiseEvent()
+        {
+            bool raised = false;
+            _assistant.ElapsedChanged += (s, e) => raised = true;
+
+            _stubTicker.SecondsElapsedReturn--;
+            _stubTicker.RaiseTick();
+
+            Assert.True(raised);
+        }
+
+        [Test]
+        public void Stoped_TimerDoneRaise_StopedRaised()
+        {
+            bool raised = false;
+            _assistant.Stoped += (s, e) => raised = true;
+
+            _stubTicker.RaiseDone();
+
+            Assert.True(raised);
+        }
     }
 }

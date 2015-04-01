@@ -11,7 +11,6 @@ namespace TimeToTomato.Model.Infrastructure
         void Start(int timeInSeconds, int secondsUpdate);
         void Stop();
         int SecondsElapsed { get; }
-        bool IsActive { get; }
         event EventHandler Tick;
         event EventHandler Done;
     }

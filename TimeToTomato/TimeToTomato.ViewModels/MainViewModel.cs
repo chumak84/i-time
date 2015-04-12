@@ -11,6 +11,7 @@ namespace TimeToTomato.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private Assistant _assistant;
+        private bool _isActive;
 
         private RelayCommand _startWorkCommand;
         private RelayCommand _startShortBreakCommand;
@@ -21,6 +22,9 @@ namespace TimeToTomato.ViewModels
         {
             _assistant = new Assistant();
             _assistant.ElapsedChanged += _assistant_ElapsedChanged;
+            _assistant.Started += (s, e) => IsActive = true;
+            _assistant.Stoped += (s, e) => IsActive = false;
+            _isActive = false;
 
             _startWorkCommand = new RelayCommand(_assistant.StartWorkTimer);
             _startShortBreakCommand = new RelayCommand(_assistant.StartShortBreak);
@@ -28,14 +32,27 @@ namespace TimeToTomato.ViewModels
             _stopCommand = new RelayCommand(_assistant.StopTimer);
         }
 
+        public bool IsActive
+        {
+            get { return _isActive; }
+            set
+            {
+                if(_isActive != value)
+                {
+                    _isActive = value;
+                    RaisePropertyChanged("IsActive");
+                }
+            }
+        }
+
         void _assistant_ElapsedChanged(object sender, EventArgs e)
         {
             RaisePropertyChanged("ElapsedSeconds");
         }
 
-        public int ElapsedSeconds
+        public string ElapsedSeconds
         {
-            get { return _assistant.ElapsedSeconds; }
+            get { return _assistant.TimeElapsed.ToString(@"mm\:ss\.fff"); }
         }
 
         public ICommand StartWorkCommand

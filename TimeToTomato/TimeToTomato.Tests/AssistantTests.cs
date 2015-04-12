@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TimeToTomato.Model;
 using TimeToTomato.Model.Infrastructure;
@@ -13,10 +14,10 @@ namespace TimeToTomato.Tests
     [TestFixture]
     public class AssistantTests
     {
-        private const int WORK_SECONDS = 25 * 60;
-        private const int SHORTBREAK_SECONDS = 5 * 60;
-        private const int LONGBREAK_SECONDS = 20 * 60;
-        private const int UPDATE_SECONDS = 1;
+        private static readonly TimeSpan WORK_TIME = new TimeSpan(0, 25, 0);
+        private static readonly TimeSpan SHORT_BREAK = new TimeSpan(0, 5, 0);
+        private static readonly TimeSpan LONG_BREAK = new TimeSpan(0, 20, 0);
+        private static readonly TimeSpan TIMER_INTERVAL = new TimeSpan(0, 0, 1);
 
         private Assistant _assistant;
 
@@ -48,11 +49,11 @@ namespace TimeToTomato.Tests
         }
 
         [Test]
-        public void StartWorkTimer_Init_WorkTimerSecondsPassed()
+        public void StartWorkTimer_Init_WorkTimeElapsed()
         {
             _assistant.StartWorkTimer();
 
-            Assert.AreEqual(WORK_SECONDS, _stubTicker.TimeInSecondsPassed);
+            Assert.AreEqual(WORK_TIME, _assistant.TimeElapsed);
         }
 
         [Test]
@@ -60,15 +61,15 @@ namespace TimeToTomato.Tests
         {
             _assistant.StartWorkTimer();
 
-            Assert.AreEqual(UPDATE_SECONDS, _stubTicker.SecondsUpdatePassed);
+            Assert.AreEqual(TIMER_INTERVAL, _stubTicker.Interval);
         }
 
         [Test]
-        public void StartShortBreak_Init_ShortBreakSecondsPassed()
+        public void StartShortBreak_Init_ShortBreakSecondsElapsed()
         {
             _assistant.StartShortBreak();
 
-            Assert.AreEqual(SHORTBREAK_SECONDS, _stubTicker.TimeInSecondsPassed);
+            Assert.AreEqual(SHORT_BREAK, _assistant.TimeElapsed);
         }
 
         [Test]
@@ -76,7 +77,7 @@ namespace TimeToTomato.Tests
         {
             _assistant.StartShortBreak();
 
-            Assert.AreEqual(UPDATE_SECONDS, _stubTicker.SecondsUpdatePassed);
+            Assert.AreEqual(TIMER_INTERVAL, _stubTicker.Interval);
         }
 
         [Test]
@@ -92,7 +93,7 @@ namespace TimeToTomato.Tests
         {
             _assistant.StartLongBreak();
 
-            Assert.AreEqual(LONGBREAK_SECONDS, _stubTicker.TimeInSecondsPassed);
+            Assert.AreEqual(LONG_BREAK, _assistant.TimeElapsed);
         }
 
         [Test]
@@ -100,7 +101,7 @@ namespace TimeToTomato.Tests
         {
             _assistant.StartLongBreak();
 
-            Assert.AreEqual(UPDATE_SECONDS, _stubTicker.SecondsUpdatePassed);
+            Assert.AreEqual(TIMER_INTERVAL, _stubTicker.Interval);
         }
 
         [Test]
@@ -116,20 +117,8 @@ namespace TimeToTomato.Tests
         {
             bool raised = false;
             _assistant.ElapsedChanged += (s, e) => raised = true;
-
-            _stubTicker.SecondsElapsedReturn--;
+            Thread.Sleep(1000);
             _stubTicker.RaiseTick();
-
-            Assert.True(raised);
-        }
-
-        [Test]
-        public void Stoped_TimerDoneRaise_StopedRaised()
-        {
-            bool raised = false;
-            _assistant.Stoped += (s, e) => raised = true;
-
-            _stubTicker.RaiseDone();
 
             Assert.True(raised);
         }

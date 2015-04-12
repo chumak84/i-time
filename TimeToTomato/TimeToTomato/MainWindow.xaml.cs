@@ -24,7 +24,16 @@ namespace TimeToTomato
         public MainWindow()
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.Manual;
+            this.Left = SystemParameters.PrimaryScreenWidth / 2 - 100;
+            this.Top = 0;
             this.DataContext = new MainViewModel();
+            
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

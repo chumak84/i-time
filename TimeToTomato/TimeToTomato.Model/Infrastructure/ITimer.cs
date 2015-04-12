@@ -8,10 +8,8 @@ namespace TimeToTomato.Model.Infrastructure
 {
     public interface ITimer
     {
-        void Start(int timeInSeconds, int secondsUpdate);
+        void Start(TimeSpan interval);
         void Stop();
-        int SecondsElapsed { get; }
         event EventHandler Tick;
-        event EventHandler Done;
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using TimeToTomato.Model.Infrastructure;
@@ -12,31 +14,16 @@ namespace TimeToTomato.Infrastructure
     {
         DispatcherTimer _timer;
 
-        DateTime _end;
-
         public Timer()
         {
             _timer = new DispatcherTimer();
-
+            
             _timer.Tick += _timer_Tick;
         }
 
         void _timer_Tick(object sender, EventArgs e)
         {
             RaiseTick();
-
-            if (SecondsElapsed <= 0)
-            {
-                _timer.Stop();
-                RaiseDone();
-            }
-        }
-
-        private void RaiseDone()
-        {
-            EventHandler h = Done;
-            if (h != null)
-                h(this, EventArgs.Empty);
         }
 
         private void RaiseTick()
@@ -46,10 +33,9 @@ namespace TimeToTomato.Infrastructure
                 h(this, EventArgs.Empty);
         }
 
-        public void Start(int timeInSeconds, int secondsUpdate)
+        public void Start(TimeSpan interval)
         {
-            _timer.Interval = new TimeSpan(0, 0, secondsUpdate);
-            _end = DateTime.Now.AddSeconds(timeInSeconds);
+            _timer.Interval = interval;
             _timer.Start();
         }
 
@@ -58,17 +44,6 @@ namespace TimeToTomato.Infrastructure
             _timer.Stop();
         }
 
-        public int SecondsElapsed
-        {
-            get
-            {
-                var elapsed = _end - DateTime.Now;
-                return (int)elapsed.TotalSeconds;
-            }
-        }
-
         public event EventHandler Tick;
-
-        public event EventHandler Done;
     }
 }

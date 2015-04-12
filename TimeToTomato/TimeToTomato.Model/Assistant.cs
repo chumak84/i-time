@@ -10,12 +10,13 @@ namespace TimeToTomato.Model
     public class Assistant
     {
         private ITimer _timer;
-        private const int WORK_SECONDS = 25 * 60;
-        private const int SHORTBREAK_SECONDS = 5 * 60;
-        private const int LONGBREAK_SECONDS = 20 * 60;
-        private const int UPDATE_SECONDS = 1;
+        private static readonly TimeSpan WORK_TIME = new TimeSpan(0, 25, 0);
+        private static readonly TimeSpan SHORT_BREAK = new TimeSpan(0, 5, 0);
+        private static readonly TimeSpan LONG_BREAK = new TimeSpan(0, 20, 0);
+        private static readonly TimeSpan TIMER_INTERVAL = new TimeSpan(0, 0, 1);
 
-        private int _elapsedSeconds = 0;
+        private DateTime _end;
+        private TimeSpan _timeElapsed;
 
         public event EventHandler ElapsedChanged;
         public event EventHandler Started;
@@ -23,15 +24,27 @@ namespace TimeToTomato.Model
 
         public Assistant()
         {
+            _timeElapsed = new TimeSpan();
             _timer = InfrastructureFactory.CreateTimer();
-            _elapsedSeconds = _timer.SecondsElapsed;
             _timer.Tick += _timer_Tick;
-            _timer.Done += _timer_Done;
         }
 
-        void _timer_Done(object sender, EventArgs e)
+        void _timer_Tick(object sender, EventArgs e)
         {
-            RaiseStoped();
+            UpdateState();
+        }
+
+        private void UpdateState()
+        {
+            _timeElapsed = _end - DateTime.Now;
+            if(_timeElapsed < TimeSpan.Zero)
+            {
+                _timeElapsed = TimeSpan.Zero;
+                _timer.Stop();
+                RaiseStoped();
+            }
+
+            RaiseElapsedChanged();
         }
 
         private void RaiseStoped()
@@ -48,9 +61,11 @@ namespace TimeToTomato.Model
                 handler(this, EventArgs.Empty);
         }
 
-        void _timer_Tick(object sender, EventArgs e)
+        private void RaiseElapsedChanged()
         {
-            ElapsedSeconds = _timer.SecondsElapsed;
+            EventHandler handler = ElapsedChanged;
+            if (handler != null)
+                handler(this, EventArgs.Empty);
         }
 
         public ITimer Timer
@@ -58,45 +73,39 @@ namespace TimeToTomato.Model
             get { return _timer; }
         }
 
-        public int ElapsedSeconds
+        public TimeSpan TimeElapsed
         {
-            get { return _elapsedSeconds; }
-            set
-            {
-                if(_elapsedSeconds != value)
-                {
-                    _elapsedSeconds = value;
-                    EventHandler handler = ElapsedChanged;
-                    if (handler != null)
-                        handler(this, EventArgs.Empty);
-                }
-            }
+            get { return _timeElapsed; }
         }
 
         public void StartWorkTimer()
         {
-            _timer.Start(WORK_SECONDS, UPDATE_SECONDS);
-            ElapsedSeconds = _timer.SecondsElapsed;
+            _end = DateTime.Now + WORK_TIME;
+            UpdateState();
+            _timer.Start(TIMER_INTERVAL);
             RaiseStarted();
         }
 
         public void StopTimer()
         {
             _timer.Stop();
-            ElapsedSeconds = 0;
+            _timeElapsed = TimeSpan.Zero;
+            RaiseElapsedChanged();
         }
 
         public void StartShortBreak()
         {
-            _timer.Start(SHORTBREAK_SECONDS, UPDATE_SECONDS);
-            ElapsedSeconds = _timer.SecondsElapsed;
+            _end = DateTime.Now + SHORT_BREAK;
+            UpdateState();
+            _timer.Start(TIMER_INTERVAL);
             RaiseStarted();
         }
 
         public void StartLongBreak()
         {
-            _timer.Start(LONGBREAK_SECONDS, UPDATE_SECONDS);
-            ElapsedSeconds = _timer.SecondsElapsed;
+            _end = DateTime.Now + LONG_BREAK;
+            UpdateState();
+            _timer.Start(TIMER_INTERVAL);
             RaiseStarted();
         }
     }

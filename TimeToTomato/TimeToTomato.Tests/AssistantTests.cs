@@ -122,5 +122,13 @@ namespace TimeToTomato.Tests
 
             Assert.True(raised);
         }
+        [Test]
+        public void Stop_CallStop_StoppedRaised()
+        {
+            bool raised = false;
+            _assistant.Stoped += (sender, e) => raised = true;
+            _assistant.StopTimer();
+            Assert.IsTrue(raised);
+        }
     }
 }

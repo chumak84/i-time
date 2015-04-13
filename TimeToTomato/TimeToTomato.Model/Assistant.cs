@@ -91,6 +91,7 @@ namespace TimeToTomato.Model
             _timer.Stop();
             _timeElapsed = TimeSpan.Zero;
             RaiseElapsedChanged();
+            RaiseStoped();
         }
 
         public void StartShortBreak()

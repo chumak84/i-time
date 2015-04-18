@@ -25,15 +25,34 @@ namespace TimeToTomato
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.Manual;
-            this.Left = SystemParameters.PrimaryScreenWidth / 2 - 100;
+            this.Left = SystemParameters.VirtualScreenWidth / 2 - 100;
             this.Top = 0;
             this.DataContext = new MainViewModel();
-            
+
+            this.LocationChanged += MainWindow_LocationChanged;
+        }
+
+        void MainWindow_LocationChanged(object sender, EventArgs e)
+        {
+            if (this.Top < 0)
+                this.Top = 0;
+            if (this.Left < 0)
+                this.Left = 0;
+            if (this.Top > SystemParameters.WorkArea.Bottom - this.ActualHeight)
+                this.Top = SystemParameters.WorkArea.Bottom - this.ActualHeight;
+            if (this.Left > SystemParameters.WorkArea.Right - this.ActualWidth)
+                this.Left = SystemParameters.WorkArea.Right - this.ActualWidth;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void ctrMoving_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
         }
     }
 }

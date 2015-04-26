@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,6 +31,8 @@ namespace TimeToTomato
         {
             DoubleAnimation da = new DoubleAnimation(25, 75, new TimeSpan(0, 0, 0, 0, 500));
             txtDone.BeginAnimation(TextBlock.FontSizeProperty, da);
+
+            SystemSounds.Beep.Play();
         }
     }
 }

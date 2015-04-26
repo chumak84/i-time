@@ -22,7 +22,6 @@ namespace TimeToTomato.ViewModels
         public MainViewModel()
         {
             _assistant = new Assistant();
-            _assistant.WorkTime = new TimeSpan(0, 0, 2);
             _assistant.ElapsedChanged += _assistant_ElapsedChanged;
             _assistant.Started += _assistant_Started;
             _assistant.Stoped += _assistant_Stoped;

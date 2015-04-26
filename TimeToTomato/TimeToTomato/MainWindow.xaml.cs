@@ -24,9 +24,21 @@ namespace TimeToTomato
         public MainWindow()
         {
             InitializeComponent();
-            this.WindowStartupLocation = WindowStartupLocation.Manual;
-            this.Left = SystemParameters.VirtualScreenWidth / 2 - 100;
-            this.Top = 0;
+
+            double left = Properties.Settings.Default.LeftPosition;
+            double top = Properties.Settings.Default.Topposition;
+            if (left < 0 || top < 0)
+            {
+                this.WindowStartupLocation = WindowStartupLocation.Manual;
+                this.Left = SystemParameters.VirtualScreenWidth / 2 - 100;
+                this.Top = 0;
+            }
+            else
+            {
+                this.Left = left;
+                this.Top = top;
+            }
+
             this.DataContext = new MainViewModel();
 
             this.LocationChanged += MainWindow_LocationChanged;
@@ -46,6 +58,9 @@ namespace TimeToTomato
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            Properties.Settings.Default.LeftPosition = this.Left;
+            Properties.Settings.Default.Topposition = this.Top;
+            Properties.Settings.Default.Save();
             this.Close();
         }
 

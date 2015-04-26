@@ -12,6 +12,7 @@ namespace TimeToTomato.ViewModels
     {
         private Assistant _assistant;
         private bool _isActive;
+        private bool _isDone;
 
         private RelayCommand _startWorkCommand;
         private RelayCommand _startShortBreakCommand;
@@ -21,9 +22,11 @@ namespace TimeToTomato.ViewModels
         public MainViewModel()
         {
             _assistant = new Assistant();
+            _assistant.WorkTime = new TimeSpan(0, 0, 2);
             _assistant.ElapsedChanged += _assistant_ElapsedChanged;
-            _assistant.Started += (s, e) => IsActive = true;
-            _assistant.Stoped += (s, e) => IsActive = false;
+            _assistant.Started += _assistant_Started;
+            _assistant.Stoped += _assistant_Stoped;
+            _assistant.Done += _assistant_Done;
             _isActive = false;
 
             _startWorkCommand = new RelayCommand(_assistant.StartWorkTimer);
@@ -32,15 +35,44 @@ namespace TimeToTomato.ViewModels
             _stopCommand = new RelayCommand(_assistant.StopTimer);
         }
 
+        void _assistant_Done(object sender, EventArgs e)
+        {
+            IsDone = true;
+        }
+
+        void _assistant_Stoped(object sender, EventArgs e)
+        {
+            IsActive = false;
+        }
+
+        void _assistant_Started(object sender, EventArgs e)
+        {
+            IsDone = false;
+            IsActive = true;
+        }
+
         public bool IsActive
         {
             get { return _isActive; }
             set
             {
-                if(_isActive != value)
+                if (_isActive != value)
                 {
                     _isActive = value;
                     RaisePropertyChanged("IsActive");
+                }
+            }
+        }
+
+        public bool IsDone
+        {
+            get { return _isDone; }
+            set
+            {
+                if (_isDone != value)
+                {
+                    _isDone = value;
+                    RaisePropertyChanged("IsDone");
                 }
             }
         }
@@ -52,7 +84,10 @@ namespace TimeToTomato.ViewModels
 
         public string ElapsedSeconds
         {
-            get { return _assistant.TimeElapsed.ToString(@"mm\:ss\.fff"); }
+            get
+            {
+                return _assistant.TimeElapsed.ToString(@"mm\:ss\.fff");
+            }
         }
 
         public ICommand StartWorkCommand

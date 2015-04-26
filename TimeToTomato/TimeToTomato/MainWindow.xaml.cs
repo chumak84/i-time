@@ -21,6 +21,9 @@ namespace TimeToTomato
     /// </summary>
     public partial class MainWindow : Window
     {
+        DoneWindow _doneWindow;
+        MainViewModel _vm;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -39,9 +42,43 @@ namespace TimeToTomato
                 this.Top = top;
             }
 
-            this.DataContext = new MainViewModel();
+            _vm = new MainViewModel();
+            this.DataContext = _vm;
 
             this.LocationChanged += MainWindow_LocationChanged;
+
+            _vm.PropertyChanged += _vm_PropertyChanged;
+        }
+
+        void _vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsDone")
+            {
+                if (_vm.IsDone)
+                    ShowDone();
+                else CloseDone();
+            }
+        }
+
+        private void CloseDone()
+        {
+            if (_doneWindow != null)
+            {
+                _doneWindow.Close();
+                _doneWindow = null;
+            }
+        }
+
+        private void ShowDone()
+        {
+            _doneWindow = new DoneWindow();
+            _doneWindow.MouseEnter += _doneWindow_MouseEnter;
+            _doneWindow.Show();
+        }
+
+        void _doneWindow_MouseEnter(object sender, MouseEventArgs e)
+        {
+            CloseDone();
         }
 
         void MainWindow_LocationChanged(object sender, EventArgs e)
@@ -58,6 +95,9 @@ namespace TimeToTomato
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (_doneWindow != null)
+                _doneWindow.Close();
+
             Properties.Settings.Default.LeftPosition = this.Left;
             Properties.Settings.Default.Topposition = this.Top;
             Properties.Settings.Default.Save();

@@ -130,5 +130,49 @@ namespace TimeToTomato.Tests
             _assistant.StopTimer();
             Assert.IsTrue(raised);
         }
+
+        [Test]
+        public void StartWorkTime_SetUpWorkTime_CustomTimeElapsed()
+        {
+            var wt = new TimeSpan(0, 0, 1);
+            _assistant.WorkTime = wt;
+            _assistant.StartWorkTimer();
+
+            Assert.AreEqual(wt, _assistant.TimeElapsed);
+        }
+
+        [Test]
+        public void StartShortBreak_SetUpShortBreak_CustomTimeElapsed()
+        {
+            var sb = new TimeSpan(0, 0, 1);
+            _assistant.ShortBreakTime = sb;
+
+            _assistant.StartShortBreak();
+
+            Assert.AreEqual(sb, _assistant.TimeElapsed);
+        }
+
+        [Test]
+        public void StartLongBreak_SetUpLongBreak_CustomTimeElapsed()
+        {
+            var sb = new TimeSpan(0, 0, 1);
+            _assistant.LongBreakTime = sb;
+
+            _assistant.StartLongBreak();
+
+            Assert.AreEqual(sb, _assistant.TimeElapsed);
+        }
+
+        [Test]
+        public void StartWorkTimer_SetUpZeroTime_RaiseDoneAfterTimerTick()
+        {
+            bool doneRaised = false;
+
+            _assistant.WorkTime = TimeSpan.Zero;
+            _assistant.Done += (s, e) => doneRaised = true;
+            _assistant.StartWorkTimer();
+            _stubTicker.RaiseTick();
+            Assert.True(doneRaised);
+        }
     }
 }

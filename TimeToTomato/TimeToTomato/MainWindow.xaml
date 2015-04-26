@@ -22,7 +22,7 @@
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    Foreground="{Binding IsActive, Converter={StaticResource IsActiveToForegroundConverter}}"
-                   Text="{Binding ElapsedSeconds}">00:00.000</TextBlock>
+                   Text="{Binding ElapsedSeconds}"></TextBlock>
         <Button Content="Stop" Width="35" FontSize="10" Background="#FFD39393" Command="{Binding StopCommand}"/>
         <Border Name="ctrMoving" Background="LightGray" MouseDown="ctrMoving_MouseDown">
             <Image Width="23" Source="Resources\Moving.png"></Image>

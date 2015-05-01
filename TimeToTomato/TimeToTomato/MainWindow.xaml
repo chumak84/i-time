@@ -5,7 +5,7 @@
         mc:Ignorable="d"
         x:Class="TimeToTomato.MainWindow"
         xmlns:conv="clr-namespace:TimeToTomato.Converters"
-        Title="TTT" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Topmost="True"
+        Title="I, Time" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Topmost="True"
         WindowStyle="None" Background="Transparent" AllowsTransparency="True"
         d:DesignWidth="291" d:DesignHeight="33">
     <Window.Resources>

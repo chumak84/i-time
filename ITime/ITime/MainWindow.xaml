@@ -6,15 +6,18 @@
         x:Class="ITime.MainWindow"
         xmlns:conv="clr-namespace:ITime.Converters"
         Title="I, Time" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Topmost="True"
-        WindowStyle="None" Background="Transparent" AllowsTransparency="True"
-        d:DesignWidth="291" d:DesignHeight="33">
+        WindowStyle="None" AllowsTransparency="True"
+        d:DesignWidth="250" d:DesignHeight="25">
+    <Window.Background>
+        <ImageBrush ImageSource="Resources/mainbg.png"></ImageBrush>
+    </Window.Background>
     <Window.Resources>
         <conv:TimerIsActiveBoolToTextColorConverter x:Key="IsActiveToForegroundConverter"></conv:TimerIsActiveBoolToTextColorConverter>
     </Window.Resources>
     <StackPanel Orientation="Horizontal" Height="23">
-        <Button Background="#FFA1D8A9" Width="30" FontSize="10" Content="Work" Command="{Binding StartWorkCommand}"/>
-        <Button Width="30" Content="Short" FontSize="10" Command="{Binding StartShortBreakCommand}"/>
-        <Button Width="30" Content="Long" FontSize="10" Command="{Binding StartLongBreakCommand}"/>
+        <Button ToolTip="Work timer 25 min" Background="#FFA1D8A9" Width="30" FontSize="10" Content="Work" Command="{Binding StartWorkCommand}"/>
+        <Button ToolTip="Short break timer 5 min" Width="30" Content="Short" FontSize="10" Command="{Binding StartShortBreakCommand}"/>
+        <Button ToolTip="Long break timer 20 min" Width="30" Content="Long" FontSize="10" Command="{Binding StartLongBreakCommand}"/>
         <TextBlock FontSize="13"
                    Width="65"
                    Margin="5,0"
@@ -23,10 +26,10 @@
                    VerticalAlignment="Center"
                    Foreground="{Binding IsActive, Converter={StaticResource IsActiveToForegroundConverter}}"
                    Text="{Binding ElapsedSeconds}"></TextBlock>
-        <Button Content="Stop" Width="35" FontSize="10" Background="#FFD39393" Command="{Binding StopCommand}"/>
-        <Border Name="ctrMoving" Background="LightGray" MouseDown="ctrMoving_MouseDown">
+        <Button ToolTip="Stop timer" Content="Stop" Width="35" FontSize="10" Background="#FFD39393" Command="{Binding StopCommand}"/>
+        <Border ToolTip="Move window" Name="ctrMoving" MouseDown="ctrMoving_MouseDown">
             <Image Width="23" Source="Resources\Moving.png"></Image>
         </Border>
-        <Button Width="23" Content="X" Click="Button_Click"></Button>
+        <Button ToolTip="Close" Width="23" Content="X" Click="Button_Click"></Button>
     </StackPanel>
 </Window>

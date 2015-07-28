@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ITime.ViewModels;
 
 namespace ITime
@@ -32,20 +21,20 @@ namespace ITime
             double top = Properties.Settings.Default.Topposition;
             if (left < 0 || top < 0)
             {
-                this.WindowStartupLocation = WindowStartupLocation.Manual;
-                this.Left = SystemParameters.VirtualScreenWidth / 2 - 100;
-                this.Top = 0;
+                WindowStartupLocation = WindowStartupLocation.Manual;
+                Left = SystemParameters.VirtualScreenWidth / 2 - 100;
+                Top = 0;
             }
             else
             {
-                this.Left = left;
-                this.Top = top;
+                Left = left;
+                Top = top;
             }
 
             _vm = new MainViewModel();
-            this.DataContext = _vm;
+            DataContext = _vm;
 
-            this.LocationChanged += MainWindow_LocationChanged;
+            LocationChanged += MainWindow_LocationChanged;
 
             _vm.PropertyChanged += _vm_PropertyChanged;
         }
@@ -60,7 +49,7 @@ namespace ITime
             }
         }
 
-        private void CloseDone()
+        void CloseDone()
         {
             if (_doneWindow != null)
             {
@@ -69,7 +58,7 @@ namespace ITime
             }
         }
 
-        private void ShowDone()
+        void ShowDone()
         {
             _doneWindow = new DoneWindow();
             _doneWindow.MouseEnter += _doneWindow_MouseEnter;
@@ -83,31 +72,31 @@ namespace ITime
 
         void MainWindow_LocationChanged(object sender, EventArgs e)
         {
-            if (this.Top < 0)
-                this.Top = 0;
-            if (this.Left < 0)
-                this.Left = 0;
-            if (this.Top > SystemParameters.WorkArea.Bottom - this.ActualHeight)
-                this.Top = SystemParameters.WorkArea.Bottom - this.ActualHeight;
-            if (this.Left > SystemParameters.WorkArea.Right - this.ActualWidth)
-                this.Left = SystemParameters.WorkArea.Right - this.ActualWidth;
+            if (Top < 0)
+                Top = 0;
+            if (Left < 0)
+                Left = 0;
+            if (Top > SystemParameters.WorkArea.Bottom - ActualHeight)
+                Top = SystemParameters.WorkArea.Bottom - ActualHeight;
+            if (Left > SystemParameters.WorkArea.Right - ActualWidth)
+                Left = SystemParameters.WorkArea.Right - ActualWidth;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        void Button_Click(object sender, RoutedEventArgs e)
         {
             if (_doneWindow != null)
                 _doneWindow.Close();
 
-            Properties.Settings.Default.LeftPosition = this.Left;
-            Properties.Settings.Default.Topposition = this.Top;
+            Properties.Settings.Default.LeftPosition = Left;
+            Properties.Settings.Default.Topposition = Top;
             Properties.Settings.Default.Save();
-            this.Close();
+            Close();
         }
 
-        private void ctrMoving_MouseDown(object sender, MouseButtonEventArgs e)
+        void ctrMoving_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
-                this.DragMove();
+                DragMove();
         }
     }
 }

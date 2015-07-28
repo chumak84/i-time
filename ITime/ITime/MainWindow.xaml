@@ -22,13 +22,13 @@
         <Button ToolTip="Short break timer 5 min" Width="30" Content="Short" FontSize="10" Command="{Binding StartShortBreakCommand}"/>
         <Button ToolTip="Long break timer 20 min" Width="30" Content="Long" FontSize="10" Command="{Binding StartLongBreakCommand}"/>
         <TextBlock FontSize="13"
-                   Width="65"
+                   Width="75"
                    Margin="0"
                    FontWeight="ExtraBold"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    Foreground="{Binding IsActive, Converter={StaticResource IsActiveToForegroundConverter}}"
-                   Text="{Binding ElapsedSeconds}"></TextBlock>
+                   Text="{Binding ElapsedSeconds}" TextAlignment="Center"></TextBlock>
         <Button ToolTip="Stop timer" Content="Stop" Width="35" FontSize="10" Background="#FFD39393" Command="{Binding StopCommand}"/>
         <Border ToolTip="Move window" Name="ctrMoving" MouseDown="ctrMoving_MouseDown">
             <Image Width="23" Source="Resources\Moving.png"></Image>
